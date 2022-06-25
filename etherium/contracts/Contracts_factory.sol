@@ -29,7 +29,8 @@ contract Campaign {
 
     // Initilizing request variable
     uint256 numRequests = 0;
-    mapping(uint => Request) public requests;
+    // mapping(uint => Request) public requests;
+    Request[] public requests;
     address public manager;
     uint public minimiumContribution;
     uint256 public approversCount;
@@ -58,6 +59,7 @@ contract Campaign {
     function contribute() public money_rest payable{
         // approvers.push(payable(msg.sender));
         approvers[msg.sender] = true;
+        approversCount++;
     }
 
     modifier money_rest(){
@@ -88,5 +90,21 @@ contract Campaign {
 
         r.recipient.transfer(r.value);
         r.complete = true;
+    }
+
+    function getSummary() public view returns(
+        uint,uint,uint,uint,address
+    ) {
+        return(
+            minimiumContribution,
+            address(this).balance,
+            requests.length,
+            approversCount,
+            manager
+        );
+    }
+
+    function getRequestsCount() public view returns (uint){
+        return requests.length;
     }
 }
