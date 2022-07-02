@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import factory from "../etherium/factory";
 import { Card, Button } from "semantic-ui-react";
 import Layout from "../components/layout";
-import { Link } from "../routes"
+import { Link } from "../routes";
 
 class campaignIndex extends Component {
   static async getInitialProps() {
@@ -31,11 +31,16 @@ class campaignIndex extends Component {
       <Layout>
         <div>
           <h3>Open campaign</h3>
-            <Link route="campaigns/new">
-              <a>
-                <Button floated="right" content="Create" icon="add circle" primary />
-              </a>
-            </Link>
+          <Link route="campaigns/new">
+            <a>
+              <Button
+                floated="right"
+                content="Create"
+                icon="add circle"
+                primary
+              />
+            </a>
+          </Link>
           {this.renderCamp()}
         </div>
       </Layout>

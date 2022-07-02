@@ -6,7 +6,7 @@ pragma solidity >=0.7.0 <0.9.0;
 contract CampaignFactory {
     address[] public deployedCampaigns;
 
-    function createCampaign(uint minimum) public {
+    function createCampaign(uint256 minimum) public {
         address campaignAddress = address(new Campaign(minimum, msg.sender));
         deployedCampaigns.push(campaignAddress);
     }
@@ -18,12 +18,12 @@ contract CampaignFactory {
 
 contract Campaign {
     // Creating a atructure
-    struct Request{
+    struct Request {
         string description;
-        uint value;
+        uint256 value;
         address payable recipient;
         bool complete;
-        uint approvalCount;
+        uint256 approvalCount;
         mapping(address => bool) approval;
     }
 
@@ -32,17 +32,21 @@ contract Campaign {
     // mapping(uint => Request) public requests;
     Request[] public requests;
     address public manager;
-    uint public minimiumContribution;
+    uint256 public minimiumContribution;
     uint256 public approversCount;
     // address payable[] public approvers;
     mapping(address => bool) public approvers;
 
-    constructor(uint minimum, address creator) {
+    constructor(uint256 minimum, address creator) {
         manager = creator;
         minimiumContribution = minimum;
     }
 
-    function create_request(string memory description, uint value, address payable recipient) public lock{
+    function create_request(
+        string memory description,
+        uint256 value,
+        address payable recipient
+    ) public lock {
         // require(approvers[msg.sender]);
         uint256 requestID = numRequests++;
         Request storage r = requests[requestID];
@@ -56,23 +60,23 @@ contract Campaign {
         // requests.push(newRequest);
     }
 
-    function contribute() public money_rest payable{
+    function contribute() public payable money_rest {
         // approvers.push(payable(msg.sender));
         approvers[msg.sender] = true;
         approversCount++;
     }
 
-    modifier money_rest(){
+    modifier money_rest() {
         require(msg.value >= minimiumContribution);
         _;
     }
 
-    modifier lock(){
+    modifier lock() {
         require(msg.sender == manager);
         _;
     }
 
-    function approve_request(uint requestId) public {
+    function approve_request(uint256 requestId) public {
         require(approvers[msg.sender]);
 
         Request storage r = requests[requestId];
@@ -84,18 +88,26 @@ contract Campaign {
 
     function finalizeRequest(uint256 requestId) public lock {
         Request storage r = requests[requestId];
-        
+
         require(!r.complete);
-        require(r.approvalCount > (approversCount/2));
+        require(r.approvalCount > (approversCount / 2));
 
         r.recipient.transfer(r.value);
         r.complete = true;
     }
 
-    function getSummary() public view returns(
-        uint,uint,uint,uint,address
-    ) {
-        return(
+    function getSummary()
+        public
+        view
+        returns (
+            uint256,
+            uint256,
+            uint256,
+            uint256,
+            address
+        )
+    {
+        return (
             minimiumContribution,
             address(this).balance,
             requests.length,
@@ -104,7 +116,7 @@ contract Campaign {
         );
     }
 
-    function getRequestsCount() public view returns (uint){
+    function getRequestsCount() public view returns (uint256) {
         return requests.length;
     }
 }

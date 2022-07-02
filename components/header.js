@@ -1,7 +1,7 @@
 import { resolveHref } from "next/dist/shared/lib/router/router";
 import React from "react";
 import { Menu } from "semantic-ui-react";
-import { Link } from "../routes"
+import { Link } from "../routes";
 
 export default () => {
   return (
